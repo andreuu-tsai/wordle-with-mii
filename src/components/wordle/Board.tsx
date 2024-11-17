@@ -40,7 +40,7 @@ export function Board({
     );
   }
   return (
-    <div className="flex flex-col h-96 w-80 m-3">
+    <div className="flex flex-col h-[360px] w-80 mt-3">
       {words.map((word, index) => {
         return (
           <div
