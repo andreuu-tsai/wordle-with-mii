@@ -5,6 +5,7 @@ import Keyboard from "@/components/wordle/Keyboard";
 import useKeydown from "@/hooks/useKeydown";
 import useWordle from "@/hooks/useWordle";
 import { checkWord } from "@/lib/checkWord";
+import getCongrats from "@/lib/getCongrats";
 import { Correctness } from "@/lib/wordleGame";
 import { RotateCw } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ export default function Wordle() {
     word: "",
     check: false,
   });
+  const [congratsMessage, setCongratsMessage] = useState("");
   const words = wordleState.words;
 
   function restart() {
@@ -29,6 +31,7 @@ export default function Wordle() {
     });
     setInputValue("");
     setIsCheckingWord({ word: "", check: false });
+    setCongratsMessage("");
   }
 
   function handleInput(key: string) {
@@ -78,11 +81,20 @@ export default function Wordle() {
         word.every((c) => c.correctness === Correctness.Correct),
       )
     ) {
-      setWordleState((prev) => ({
-        ...prev,
-        gameResult: "win",
-        isGameOver: true,
-      }));
+      async function handleWin() {
+        setWordleState((prev) => ({
+          ...prev,
+          gameResult: "win",
+          isGameOver: true,
+        }));
+        try {
+          const congrats = await getCongrats(words);
+          setCongratsMessage(congrats);
+        } catch (error) {
+          console.error("Error fetching congrats message:", error);
+        }
+      }
+      handleWin();
     }
     // lose
     else if (words.length === MAX_ATTEMPTS) {
@@ -99,9 +111,14 @@ export default function Wordle() {
       <Board n_words={MAX_ATTEMPTS} n_characters={WORD_LENGTH} words={words} />
       <p className="h-4 m-1">{inputValue}</p>
       <Keyboard handleInput={handleInput} />
-      {wordleState.gameResult === "win" && <p className="h-4 m-2">You win!</p>}
+      {wordleState.gameResult === "win" && (
+        <div className="flex flex-col items-center">
+          <div className="text-lg font-semibold">You win!</div>
+          <div className="text-xl text-muted-foreground">{congratsMessage}</div>
+        </div>
+      )}
       {wordleState.gameResult === "lose" && (
-        <p className="h-4 m-2">You lose!</p>
+        <div className="text-lg font-semibold">You lose!</div>
       )}
       {wordleState.isGameOver && (
         <Button
