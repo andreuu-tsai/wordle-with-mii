@@ -20,18 +20,18 @@ export function Tile({ character }: { character: CharacterStatus }) {
 }
 
 export function Board({
-  n_words,
-  n_characters,
+  nWords,
+  nCharacters,
   words,
 }: {
-  n_words: number;
-  n_characters: number;
+  nWords: number;
+  nCharacters: number;
   words: WordStatus[];
 }) {
-  if (words.length < n_words) {
+  if (words.length < nWords) {
     words = words.concat(
-      Array(n_words - words.length).fill(
-        Array(n_characters).fill({
+      Array(nWords - words.length).fill(
+        Array(nCharacters).fill({
           character: " ",
           correctness: Correctness.Unknown,
         }),
