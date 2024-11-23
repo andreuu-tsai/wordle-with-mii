@@ -1,18 +1,17 @@
 import { cn } from "@/lib/utils";
-import { CharacterStatus, Correctness, WordStatus } from "@/lib/wordleGame";
+import {
+  CharacterStatus,
+  Correctness,
+  getCharacterStyle,
+  WordStatus,
+} from "@/lib/wordleGame";
 
 export function Tile({ character }: { character: CharacterStatus }) {
   return (
     <div
       className={cn(
         "flex justify-center items-center aspect-square w-14 text-white",
-        {
-          "border-2 border-neutral-300 text-black":
-            character.correctness === Correctness.Unknown,
-          "bg-green-400": character.correctness === Correctness.Correct,
-          "bg-neutral-400": character.correctness === Correctness.Incorrect,
-          "bg-yellow-400": character.correctness === Correctness.Misplaced,
-        },
+        getCharacterStyle(character.correctness),
       )}
     >
       <p className="text-3xl font-bold">{character.character}</p>
