@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Board } from "@/components/wordle/Board";
+import CongratsMessage from "@/components/wordle/CongratsMessage";
 import Keyboard from "@/components/wordle/Keyboard";
 import useKeydown from "@/hooks/useKeydown";
 import useWordle from "@/hooks/useWordle";
 import { checkWord } from "@/lib/checkWord";
-import getCongrats from "@/lib/getCongrats";
 import { Correctness } from "@/lib/wordleGame";
 import { RotateCw } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -20,7 +20,6 @@ export default function Wordle() {
     word: "",
     check: false,
   });
-  const [congratsMessage, setCongratsMessage] = useState("");
   const words = wordleState.words;
 
   function restart() {
@@ -31,7 +30,6 @@ export default function Wordle() {
     });
     setInputValue("");
     setIsCheckingWord({ word: "", check: false });
-    setCongratsMessage("");
   }
 
   function handleInput(key: string) {
@@ -87,12 +85,6 @@ export default function Wordle() {
           gameResult: "win",
           isGameOver: true,
         }));
-        try {
-          const congrats = await getCongrats(words);
-          setCongratsMessage(congrats);
-        } catch (error) {
-          console.error("Error fetching congrats message:", error);
-        }
       }
       handleWin();
     }
@@ -114,7 +106,7 @@ export default function Wordle() {
       {wordleState.gameResult === "win" && (
         <div className="flex flex-col items-center">
           <div className="text-lg font-semibold">You win!</div>
-          <div className="text-xl text-muted-foreground">{congratsMessage}</div>
+          <CongratsMessage words={words} />
         </div>
       )}
       {wordleState.gameResult === "lose" && (

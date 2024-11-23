@@ -13,7 +13,7 @@ export default async function getCongrats(
     .join(", ");
   const messages = [
     new SystemMessage(`You are a friendly game master of wordle game. 
-        The user win the game. Generate congrats message base on user's guess
+        The user win the game. Make a joke about user's guesses and congrats user in 50 words
         The answer is ${solution}`),
     new HumanMessage(`My guesses are ${guess}`),
   ];
