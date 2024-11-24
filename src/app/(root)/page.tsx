@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Board } from "@/components/wordle/Board";
+import CongratsMessage from "@/components/wordle/CongratsMessage";
 import Keyboard from "@/components/wordle/Keyboard";
 import useKeydown from "@/hooks/useKeydown";
 import useWordle from "@/hooks/useWordle";
@@ -78,11 +79,14 @@ export default function Wordle() {
         word.every((c) => c.correctness === Correctness.Correct),
       )
     ) {
-      setWordleState((prev) => ({
-        ...prev,
-        gameResult: "win",
-        isGameOver: true,
-      }));
+      async function handleWin() {
+        setWordleState((prev) => ({
+          ...prev,
+          gameResult: "win",
+          isGameOver: true,
+        }));
+      }
+      handleWin();
     }
     // lose
     else if (words.length === MAX_ATTEMPTS) {
@@ -96,12 +100,17 @@ export default function Wordle() {
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
-      <Board n_words={MAX_ATTEMPTS} n_characters={WORD_LENGTH} words={words} />
+      <Board nWords={MAX_ATTEMPTS} nCharacters={WORD_LENGTH} words={words} />
       <p className="h-4 m-1">{inputValue}</p>
-      <Keyboard handleInput={handleInput} />
-      {wordleState.gameResult === "win" && <p className="h-4 m-2">You win!</p>}
+      <Keyboard handleInput={handleInput} words={words} />
+      {wordleState.gameResult === "win" && (
+        <div className="flex flex-col items-center">
+          <div className="text-lg font-semibold">You win!</div>
+          <CongratsMessage words={words} />
+        </div>
+      )}
       {wordleState.gameResult === "lose" && (
-        <p className="h-4 m-2">You lose!</p>
+        <div className="text-lg font-semibold">You lose!</div>
       )}
       {wordleState.isGameOver && (
         <Button
