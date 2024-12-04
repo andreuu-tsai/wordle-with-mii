@@ -99,9 +99,9 @@ export default function Wordle() {
   }, [words, setWordleState]);
 
   return (
-    <div className="flex flex-col justify-center items-center w-full">
+    <div className="flex w-full flex-col items-center justify-center">
       <Board nWords={MAX_ATTEMPTS} nCharacters={WORD_LENGTH} words={words} />
-      <p className="h-4 m-1">{inputValue}</p>
+      <p className="m-1 h-4">{inputValue}</p>
       <Keyboard handleInput={handleInput} words={words} />
       {wordleState.gameResult === "win" && (
         <div className="flex flex-col items-center">

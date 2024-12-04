@@ -14,13 +14,13 @@ export default async function UserButton() {
   const session = await auth();
   if (!session?.user)
     return (
-      <div className="bg-black-2 hover:bg-black-1 text-white font-bold py-2 px-4 rounded-full">
+      <div className="bg-black-2 hover:bg-black-1 rounded-full px-4 py-2 font-bold text-white">
         <SignIn />
       </div>
     );
   return (
     <div className="flex items-center gap-2">
-      <span className="hidden text-sm sm:inline-flex text-16 font-normal text-gray-600">
+      <span className="text-16 hidden text-sm font-normal text-gray-600 sm:inline-flex">
         {session.user.name}
       </span>
       <DropdownMenu>
@@ -45,7 +45,7 @@ export default async function UserButton() {
               <p className="text-sm font-medium leading-none">
                 {session.user.name}
               </p>
-              <p className="text-muted-foreground text-xs leading-none">
+              <p className="text-xs leading-none text-muted-foreground">
                 {session.user.email}
               </p>
             </div>

@@ -24,13 +24,13 @@ export default function Keyboard({
     <div className="flex flex-col">
       {keyboardRows.map((keyboardRow, index) => {
         return (
-          <div key={index} className="flex justify-center mb-1 p-1 w-full h-16">
+          <div key={index} className="mb-1 flex h-16 w-full justify-center p-1">
             {keyboardRow.map((k) => (
               <Button
                 variant="secondary"
                 key={k}
                 className={cn(
-                  "m-1 h-full w-min-11",
+                  "w-min-11 m-1 h-full",
                   getCharacterStyle(charCorrectnessMap.get(k)!),
                 )}
                 onClick={(e) => {
