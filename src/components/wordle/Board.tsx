@@ -10,7 +10,7 @@ export function Tile({ character }: { character: CharacterStatus }) {
   return (
     <div
       className={cn(
-        "flex justify-center items-center aspect-square w-14 text-white",
+        "flex aspect-square w-14 items-center justify-center text-white",
         getCharacterStyle(character.correctness),
       )}
     >
@@ -39,12 +39,12 @@ export function Board({
     );
   }
   return (
-    <div className="flex flex-col h-[360px] w-80 mt-3">
+    <div className="mt-3 flex h-[360px] w-80 flex-col">
       {words.map((word, index) => {
         return (
           <div
             key={index}
-            className="flex justify-center flex-shrink h-14 gap-1 mb-1"
+            className="mb-1 flex h-14 flex-shrink justify-center gap-1"
           >
             {word.map((character, index) => (
               <Tile key={index} character={character} />
