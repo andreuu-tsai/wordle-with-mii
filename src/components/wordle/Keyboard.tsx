@@ -30,7 +30,7 @@ export default function Keyboard({
                 variant="secondary"
                 key={k}
                 className={cn(
-                  "w-min-11 m-1 h-full",
+                  "m-1 h-full min-w-11",
                   getCharacterStyle(charCorrectnessMap.get(k)!),
                 )}
                 onClick={(e) => {
