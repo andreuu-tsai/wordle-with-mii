@@ -1,4 +1,5 @@
 import Nav from "@/components/Nav";
+import ChatWindow from "@/components/chat-window";
 
 export default function Layout({
   children,
@@ -9,6 +10,7 @@ export default function Layout({
     <div className="flex w-screen flex-col items-center">
       <Nav />
       {children}
+      <ChatWindow />
     </div>
   );
 }
