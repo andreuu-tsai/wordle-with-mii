@@ -1,5 +1,7 @@
 import {
+  boolean,
   integer,
+  json,
   pgTable,
   serial,
   text,
@@ -26,9 +28,31 @@ export const users = pgTable(
 export const games = pgTable("games", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
-  words: text("words").notNull(),
-  isGameOver: text("is_game_over").default("false").notNull(),
+  words: json("words").default([]).notNull(),
+  solution: varchar("solution").notNull(),
+  isGameOver: boolean("is_game_over").default(false).notNull(),
   gameResult: varchar("game_result", { length: 10 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const chats = pgTable("chats", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  chatId: integer("chat_id")
+    .references(() => chats.id)
+    .notNull(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
+  role: varchar("role", { length: 50 }).notNull(), // user, agent
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
