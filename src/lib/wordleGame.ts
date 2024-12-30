@@ -5,6 +5,9 @@ export enum Correctness {
   Correct = 3,
 }
 
+export const WORD_LENGTH = 5;
+export const MAX_ATTEMPTS = 6;
+
 export type CharacterStatus = {
   character: string;
   correctness: Correctness;
@@ -39,3 +42,11 @@ export function buildCharCorrectnessMap(
     return map;
   }, new Map<string, Correctness>());
 }
+
+export type Game = {
+  id: number;
+  userId: number;
+  words: WordStatus[];
+  isGameOver: boolean;
+  gameResult: string | null;
+};

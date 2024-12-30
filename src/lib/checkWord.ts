@@ -1,8 +1,6 @@
-"use server";
 import { Correctness, WordStatus } from "./wordleGame";
 
-export async function checkWord(input: string): Promise<WordStatus> {
-  const solution = "PEACH";
+export function checkWord(input: string, solution: string): WordStatus {
   if (input.length !== solution.length) {
     throw new Error("The strings must have the same length");
   }
