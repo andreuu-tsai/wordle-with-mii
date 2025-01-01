@@ -1,10 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Board } from "@/components/wordle/Board";
-import CongratsMessage from "@/components/wordle/CongratsMessage";
 import Keyboard from "@/components/wordle/Keyboard";
 import { useWordleInput } from "@/hooks/use-wordle-input";
 import useKeydown from "@/hooks/useKeydown";
+import generateCongrats from "@/lib/chat";
 import { getGameById } from "@/lib/getGameById";
 import { Game, MAX_ATTEMPTS, WORD_LENGTH } from "@/lib/wordleGame";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ const DEFAULT_GAME_STATE = {
 };
 
 export default function Wordle({ id }: { id: number }) {
+  const mockUserId = 2; // 先模擬有取得userId的狀況，之後用AuthJS取得
   const queryClient = useQueryClient();
 
   const {
@@ -44,8 +45,11 @@ export default function Wordle({ id }: { id: number }) {
 
       return response.json();
     },
-    onSuccess: (updatedGame) => {
+    onSuccess: (updatedGame: Game) => {
       queryClient.setQueryData(["games", { id }], updatedGame);
+      if (updatedGame.isGameOver && updatedGame.gameResult === "win") {
+        generateCongrats(mockUserId, updatedGame.words);
+      }
     },
   });
 
@@ -104,7 +108,6 @@ export default function Wordle({ id }: { id: number }) {
       {game.gameResult === "win" && (
         <div className="flex flex-col items-center">
           <div className="text-lg font-semibold">You win!</div>
-          <CongratsMessage words={words} />
         </div>
       )}
       {game.gameResult === "lose" && (

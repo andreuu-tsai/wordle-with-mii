@@ -12,6 +12,7 @@ import { Input } from "./ui/input";
 export default function ChatWindow({ userId }: { userId: number }) {
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [prevMessagesLength, setPrevMessagesLength] = useState(0);
 
   const {
     isPending,
@@ -73,10 +74,13 @@ export default function ChatWindow({ userId }: { userId: number }) {
   const inputLength = input.trim().length;
 
   useEffect(() => {
-    if (messagesEndRef.current) {
+    if (!messages) {
+      return;
+    } else if (messagesEndRef.current && messages.length > prevMessagesLength) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      setPrevMessagesLength(messages.length);
     }
-  }, [messages]);
+  }, [messages, prevMessagesLength]);
 
   if (isPending) return;
   if (isError) {
