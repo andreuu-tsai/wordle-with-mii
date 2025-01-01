@@ -36,19 +36,8 @@ export const games = pgTable("games", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const chats = pgTable("chats", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id")
-    .references(() => users.id)
-    .notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
 export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),
-  chatId: integer("chat_id")
-    .references(() => chats.id)
-    .notNull(),
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),
