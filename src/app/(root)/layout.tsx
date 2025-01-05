@@ -1,5 +1,6 @@
 import Nav from "@/components/Nav";
 import ChatWindow from "@/components/chat-window";
+import ReactQueryProvider from "@/components/provider";
 
 export default function Layout({
   children,
@@ -7,10 +8,12 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex w-screen flex-col items-center">
-      <Nav />
-      {children}
-      <ChatWindow />
-    </div>
+    <ReactQueryProvider>
+      <div className="flex w-screen flex-col items-center">
+        <Nav />
+        {children}
+        <ChatWindow userId={2} />
+      </div>
+    </ReactQueryProvider>
   );
 }
