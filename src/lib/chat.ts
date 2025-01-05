@@ -7,7 +7,7 @@ import { asc, eq } from "drizzle-orm";
 import { WordStatus } from "./wordleGame";
 
 export default async function generateCongrats(
-  userId: number,
+  userId: string,
   words: WordStatus[],
 ) {
   const solution = words[words.length - 1].map((c) => c.character).join("");
@@ -26,7 +26,7 @@ export default async function generateCongrats(
 }
 
 export async function addMessage(
-  userId: number,
+  userId: string,
   role: string,
   content: string,
 ) {
@@ -38,7 +38,7 @@ export async function addMessage(
   await db.insert(messages).values(newMessage).execute();
 }
 
-export async function getMessagesByUserId(userId: number) {
+export async function getMessagesByUserId(userId: string) {
   return await db
     .select()
     .from(messages)

@@ -16,8 +16,7 @@ const DEFAULT_GAME_STATE = {
   gameResult: null,
 };
 
-export default function Wordle({ id }: { id: number }) {
-  const mockUserId = 2; // 先模擬有取得userId的狀況，之後用AuthJS取得
+export default function Wordle({ id, userId }: { id: number; userId: string }) {
   const queryClient = useQueryClient();
 
   const {
@@ -48,7 +47,7 @@ export default function Wordle({ id }: { id: number }) {
     onSuccess: (updatedGame: Game) => {
       queryClient.setQueryData(["games", { id }], updatedGame);
       if (updatedGame.isGameOver && updatedGame.gameResult === "win") {
-        generateCongrats(mockUserId, updatedGame.words);
+        generateCongrats(userId, updatedGame.words);
       }
     },
   });

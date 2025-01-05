@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Input } from "./ui/input";
 
-export default function ChatWindow({ userId }: { userId: number }) {
+export default function ChatWindow({ userId }: { userId: string }) {
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [prevMessagesLength, setPrevMessagesLength] = useState(0);

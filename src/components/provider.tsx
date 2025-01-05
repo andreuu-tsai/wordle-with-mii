@@ -1,7 +1,8 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
 
-export default function ReactQueryProvider({
+export function ReactQueryProvider({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -10,4 +11,12 @@ export default function ReactQueryProvider({
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+}
+
+export function AuthSessionProvider({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return <SessionProvider>{children}</SessionProvider>;
 }
