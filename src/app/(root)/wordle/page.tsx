@@ -14,7 +14,7 @@ export default async function Page({
     const userId = session.user?.id as string;
     return (
       <>
-        <Wordle id={id} userId={userId} />
+        <Wordle userId={userId} />
         <ChatWindow userId={userId} />
       </>
     );

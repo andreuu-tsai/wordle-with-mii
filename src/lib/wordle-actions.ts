@@ -83,6 +83,28 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
   }
 }
 
+function generateSolution() {
+  return "PEACH";
+}
+
+export async function newGame(userId: string) {
+  try {
+    const game = await db
+      .select()
+      .from(games)
+      .where(eq(games.userId, userId))
+      .execute();
+    if (game.length === 0) {
+      await db.insert(games).values({ solution: generateSolution(), userId });
+    } else {
+      await resetGame(userId);
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function resetGame(userId: string) {
   try {
     await db
