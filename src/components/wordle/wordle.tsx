@@ -4,7 +4,6 @@ import { Board } from "@/components/wordle/Board";
 import Keyboard from "@/components/wordle/Keyboard";
 import { useWordleInput } from "@/hooks/use-wordle-input";
 import useKeydown from "@/hooks/useKeydown";
-import generateCongrats from "@/lib/chat";
 import { getGameByUserId, resetGame, submitWord } from "@/lib/wordle-actions";
 import {
   DEFAULT_GAME_STATE,
@@ -32,9 +31,6 @@ export default function Wordle({ userId }: { userId: string }) {
     mutationFn: (word: string) => submitWord(word, userId),
     onSuccess: (updatedGame: Game) => {
       queryClient.setQueryData(["games", { userId }], updatedGame);
-      if (updatedGame.isGameOver && updatedGame.gameResult === "win") {
-        generateCongrats(userId, updatedGame.words);
-      }
     },
   });
 

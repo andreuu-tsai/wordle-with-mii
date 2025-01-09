@@ -2,6 +2,7 @@
 import { db } from "@/db/db";
 import { games } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import generateCongrats from "./chat";
 import { checkWord } from "./checkWord";
 import {
   Correctness,
@@ -51,6 +52,10 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
         gameResult: "win",
         isGameOver: true,
       };
+      generateCongrats(
+        userId,
+        newGame.words.map((word) => checkWord(word, game.solution)),
+      );
     } else if (prevWords.length + 1 === MAX_ATTEMPTS) {
       newGame = {
         ...game,
