@@ -13,6 +13,12 @@ export type CharacterStatus = {
   correctness: Correctness;
 };
 
+export const DEFAULT_GAME_STATE = {
+  words: [],
+  isGameOver: false,
+  gameResult: null,
+};
+
 export type WordStatus = CharacterStatus[];
 
 export function getCharacterStyle(correctness: Correctness): string {
@@ -45,7 +51,7 @@ export function buildCharCorrectnessMap(
 
 export type Game = {
   id: number;
-  userId: number;
+  userId: string;
   words: WordStatus[];
   isGameOver: boolean;
   gameResult: string | null;

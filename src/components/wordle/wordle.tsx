@@ -5,19 +5,17 @@ import Keyboard from "@/components/wordle/Keyboard";
 import { useWordleInput } from "@/hooks/use-wordle-input";
 import useKeydown from "@/hooks/useKeydown";
 import generateCongrats from "@/lib/chat";
-import { getGameById } from "@/lib/getGameById";
-import { Game, MAX_ATTEMPTS, WORD_LENGTH } from "@/lib/wordleGame";
+import { getGameByUserId, resetGame, submitWord } from "@/lib/wordle-actions";
+import {
+  DEFAULT_GAME_STATE,
+  Game,
+  MAX_ATTEMPTS,
+  WORD_LENGTH,
+} from "@/lib/wordleGame";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RotateCw } from "lucide-react";
 
-const DEFAULT_GAME_STATE = {
-  words: [],
-  isGameOver: false,
-  gameResult: null,
-};
-
-export default function Wordle({ id }: { id: number }) {
-  const mockUserId = 2; // 先模擬有取得userId的狀況，之後用AuthJS取得
+export default function Wordle({ userId }: { userId: string }) {
   const queryClient = useQueryClient();
 
   const {
@@ -26,68 +24,37 @@ export default function Wordle({ id }: { id: number }) {
     data: game,
     error,
   } = useQuery<Game>({
-    queryKey: ["games", { id: id }],
-    queryFn: async () => await getGameById(id),
+    queryKey: ["games", { userId }],
+    queryFn: async () => await getGameByUserId(userId),
   });
 
-  const { mutateAsync: submitWord } = useMutation({
-    mutationFn: async ({ id, word }: { id: number; word: string }) => {
-      const response = await fetch(`/api/wordle/${id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ word }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to submit word");
-      }
-
-      return response.json();
-    },
+  const { mutate: submit } = useMutation({
+    mutationFn: (word: string) => submitWord(word, userId),
     onSuccess: (updatedGame: Game) => {
-      queryClient.setQueryData(["games", { id }], updatedGame);
+      queryClient.setQueryData(["games", { userId }], updatedGame);
       if (updatedGame.isGameOver && updatedGame.gameResult === "win") {
-        generateCongrats(mockUserId, updatedGame.words);
+        generateCongrats(userId, updatedGame.words);
       }
     },
   });
 
-  const { inputValue, handleInput, resetInput } = useWordleInput(
-    game,
-    (word) => {
-      submitWord({ id, word });
-    },
-  );
-
-  const { mutateAsync: resetGame } = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await fetch(`/api/wordle/${id}/reset`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to reset the game");
-      }
-
-      return response.json();
-    },
+  const { mutateAsync: reset } = useMutation({
+    mutationFn: async () => resetGame(userId),
     onMutate: async () => {
-      queryClient.setQueryData(["games", { id }], {
-        id,
+      queryClient.setQueryData(["games", { userId }], {
+        userId,
         ...DEFAULT_GAME_STATE,
       });
     },
     onSuccess: () => {
-      queryClient.setQueryData(["games", { id }], {
+      queryClient.setQueryData(["games", { userId }], {
         ...game,
         ...DEFAULT_GAME_STATE,
       });
     },
   });
 
+  const { inputValue, handleInput, resetInput } = useWordleInput(game, submit);
   useKeydown((e) => {
     handleInput(e.key);
   });
@@ -119,7 +86,7 @@ export default function Wordle({ id }: { id: number }) {
           size="icon"
           onClick={(e) => {
             resetInput();
-            resetGame(id);
+            reset();
             e.currentTarget.blur();
           }}
         >
