@@ -74,7 +74,6 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
         words: [...prevWords, word],
       };
     }
-    console.log(newGame);
     await db
       .update(games)
       .set(newGame)
