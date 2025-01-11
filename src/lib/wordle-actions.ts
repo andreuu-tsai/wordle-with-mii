@@ -2,7 +2,7 @@
 import { db } from "@/db/db";
 import { games } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import generateCongrats from "./chat";
+import generateCongrats, { generateEncouragementOrTaunt } from "./chat";
 import { checkWord } from "./checkWord";
 import {
   Correctness,
@@ -63,13 +63,17 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
         gameResult: "lose",
         isGameOver: true,
       };
+      generateEncouragementOrTaunt(
+        userId,
+        newGame.words.map((word) => checkWord(word, game.solution)),
+        game.solution,
+      );
     } else {
       newGame = {
         ...game,
         words: [...prevWords, word],
       };
     }
-    console.log(newGame);
     await db
       .update(games)
       .set(newGame)

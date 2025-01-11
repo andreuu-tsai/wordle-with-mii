@@ -25,6 +25,36 @@ export default async function generateCongrats(
   addMessage(userId, "mii", content);
 }
 
+export async function generateEncouragementOrTaunt(
+  userId: string,
+  words: WordStatus[],
+  solution: string,
+) {
+  const model = new ChatOpenAI({ model: "gpt-4o-mini" });
+  const guess = words
+    .map((word) => word.map((char) => char.character).join(""))
+    .join(", ");
+  let systemMessage;
+  if (Math.random() < 0.5) {
+    systemMessage =
+      new SystemMessage(`You are a humor game master of wordle game. 
+      The user lost the game. Taunt the user with a joke about user's guesses in 50 words
+      The answer is ${solution}`);
+  } else {
+    systemMessage =
+      new SystemMessage(`You are a humor game master of wordle game. 
+      The user lost the game. Encourage the user. You can talk about user's guesses in 50 words
+      The answer is ${solution}`);
+  }
+  const content = (
+    await model.invoke([
+      systemMessage,
+      new HumanMessage(`guesses are ${guess}`),
+    ])
+  ).content.toString();
+  addMessage(userId, "mii", content);
+}
+
 export async function addMessage(
   userId: string,
   role: string,
