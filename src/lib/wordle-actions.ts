@@ -5,12 +5,7 @@ import { eq } from "drizzle-orm";
 import generateCongrats, { generateEncouragementOrTaunt } from "./chat";
 import { checkWord } from "./checkWord";
 import { authenticate } from "./utils";
-import {
-  Correctness,
-  DEFAULT_GAME_STATE,
-  Game,
-  MAX_ATTEMPTS,
-} from "./wordleGame";
+import { Correctness, DEFAULT_GAME_STATE, Game } from "./wordleGame";
 
 export async function getGameByUserId(userId: string): Promise<Game> {
   await authenticate(userId);
@@ -24,6 +19,7 @@ export async function getGameByUserId(userId: string): Promise<Game> {
     words: words.map((word) => checkWord(word, game.solution)),
     isGameOver: game.isGameOver,
     gameResult: game.gameResult,
+    maxAttempts: game.maxAttempts,
   };
 }
 
@@ -59,7 +55,7 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
         userId,
         newGame.words.map((word) => checkWord(word, game.solution)),
       );
-    } else if (prevWords.length + 1 === MAX_ATTEMPTS) {
+    } else if (prevWords.length + 1 === game.maxAttempts) {
       newGame = {
         ...game,
         words: [...prevWords, word],
@@ -88,6 +84,7 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
       words: newGame.words.map((word) => checkWord(word, newGame.solution)),
       isGameOver: newGame.isGameOver,
       gameResult: newGame.gameResult,
+      maxAttempts: newGame.maxAttempts,
     };
   } catch (error) {
     console.error(error);

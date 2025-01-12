@@ -1,3 +1,4 @@
+import { DEFAULT_MAX_ATTEMPTS } from "@/lib/wordleGame";
 import {
   boolean,
   integer,
@@ -103,6 +104,7 @@ export const games = pgTable("games", {
   solution: varchar("solution").notNull(),
   isGameOver: boolean("is_game_over").default(false).notNull(),
   gameResult: varchar("game_result", { length: 10 }),
+  maxAttempts: integer("max_attempts").notNull().default(DEFAULT_MAX_ATTEMPTS),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
