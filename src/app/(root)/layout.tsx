@@ -9,7 +9,7 @@ export default function Layout({
   return (
     <AuthSessionProvider>
       <ReactQueryProvider>
-        <div className="flex w-screen flex-col items-center">
+        <div className="flex max-w-full flex-col items-center">
           <Nav />
           {children}
         </div>
