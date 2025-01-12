@@ -4,12 +4,7 @@ import { Board } from "@/components/wordle/Board";
 import Keyboard from "@/components/wordle/Keyboard";
 import useKeydown from "@/hooks/useKeydown";
 import { getGameByUserId, resetGame, submitWord } from "@/lib/wordle-actions";
-import {
-  DEFAULT_GAME_STATE,
-  Game,
-  MAX_ATTEMPTS,
-  WORD_LENGTH,
-} from "@/lib/wordleGame";
+import { DEFAULT_GAME_STATE, Game, WORD_LENGTH } from "@/lib/wordleGame";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RotateCw } from "lucide-react";
 import { useState } from "react";
@@ -82,7 +77,11 @@ export default function Wordle({ userId }: { userId: string }) {
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <Board nWords={MAX_ATTEMPTS} nCharacters={WORD_LENGTH} words={words} />
+      <Board
+        nWords={game.maxAttempts}
+        nCharacters={WORD_LENGTH}
+        words={words}
+      />
       <p className="m-1 h-4">{inputValue}</p>
       <Keyboard handleInput={handleInput} words={words} />
       {game.gameResult === "win" && (

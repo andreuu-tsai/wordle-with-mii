@@ -6,7 +6,6 @@ export enum Correctness {
 }
 
 export const WORD_LENGTH = 5;
-export const MAX_ATTEMPTS = 6;
 
 export type CharacterStatus = {
   character: string;
@@ -55,4 +54,5 @@ export type Game = {
   words: WordStatus[];
   isGameOver: boolean;
   gameResult: string | null;
+  maxAttempts: number;
 };
