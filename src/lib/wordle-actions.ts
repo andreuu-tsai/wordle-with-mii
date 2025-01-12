@@ -2,9 +2,17 @@
 import { db } from "@/db/db";
 import { games } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import generateCongrats, { generateEncouragementOrTaunt } from "./chat";
+import generateCongrats, {
+  generateEncouragementOrTaunt,
+  generateOneMoreChance,
+} from "./chat";
 import { checkWord } from "./checkWord";
-import { Correctness, DEFAULT_GAME_STATE, Game } from "./wordleGame";
+import {
+  Correctness,
+  DEFAULT_GAME_STATE,
+  EXTRA_LIFE_PROBABILITY,
+  Game,
+} from "./wordleGame";
 
 export async function getGameByUserId(userId: string): Promise<Game> {
   const game = (
@@ -53,17 +61,29 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
         newGame.words.map((word) => checkWord(word, game.solution)),
       );
     } else if (prevWords.length + 1 === game.maxAttempts) {
-      newGame = {
-        ...game,
-        words: [...prevWords, word],
-        gameResult: "lose",
-        isGameOver: true,
-      };
-      generateEncouragementOrTaunt(
-        userId,
-        newGame.words.map((word) => checkWord(word, game.solution)),
-        game.solution,
-      );
+      if (Math.random() < EXTRA_LIFE_PROBABILITY) {
+        newGame = {
+          ...game,
+          words: [...prevWords, word],
+          maxAttempts: game.maxAttempts + 1,
+        };
+        generateOneMoreChance(
+          userId,
+          newGame.words.map((word) => checkWord(word, game.solution)),
+        );
+      } else {
+        newGame = {
+          ...game,
+          words: [...prevWords, word],
+          gameResult: "lose",
+          isGameOver: true,
+        };
+        generateEncouragementOrTaunt(
+          userId,
+          newGame.words.map((word) => checkWord(word, game.solution)),
+          game.solution,
+        );
+      }
     } else {
       newGame = {
         ...game,

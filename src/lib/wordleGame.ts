@@ -6,6 +6,9 @@ export enum Correctness {
 }
 
 export const WORD_LENGTH = 5;
+export const DEFAULT_MAX_ATTEMPTS = 6;
+
+export const EXTRA_LIFE_PROBABILITY = 0.25;
 
 export type CharacterStatus = {
   character: string;
@@ -16,6 +19,7 @@ export const DEFAULT_GAME_STATE = {
   words: [],
   isGameOver: false,
   gameResult: null,
+  maxAttempts: DEFAULT_MAX_ATTEMPTS,
 };
 
 export type WordStatus = CharacterStatus[];
