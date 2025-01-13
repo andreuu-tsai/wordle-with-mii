@@ -4,6 +4,7 @@ import { games } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import generateCongrats, { generateEncouragementOrTaunt } from "./chat";
 import { checkWord } from "./checkWord";
+import { authenticate } from "./utils";
 import {
   Correctness,
   DEFAULT_GAME_STATE,
@@ -12,6 +13,7 @@ import {
 } from "./wordleGame";
 
 export async function getGameByUserId(userId: string): Promise<Game> {
+  await authenticate(userId);
   const game = (
     await db.select().from(games).where(eq(games.userId, userId)).execute()
   )[0];
@@ -26,6 +28,7 @@ export async function getGameByUserId(userId: string): Promise<Game> {
 }
 
 export async function submitWord(word: string, userId: string): Promise<Game> {
+  await authenticate(userId);
   try {
     const game = await db
       .select()
@@ -97,6 +100,7 @@ function generateSolution() {
 }
 
 export async function newGame(userId: string) {
+  await authenticate(userId);
   try {
     const game = await db
       .select()
@@ -115,6 +119,7 @@ export async function newGame(userId: string) {
 }
 
 export async function resetGame(userId: string) {
+  await authenticate(userId);
   try {
     await db
       .update(games)
