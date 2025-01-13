@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Board } from "@/components/wordle/Board";
 import Keyboard from "@/components/wordle/Keyboard";
-import { useWordleInput } from "@/hooks/use-wordle-input";
 import useKeydown from "@/hooks/useKeydown";
 import { getGameByUserId, resetGame, submitWord } from "@/lib/wordle-actions";
 import {
@@ -13,10 +12,11 @@ import {
 } from "@/lib/wordleGame";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RotateCw } from "lucide-react";
+import { useState } from "react";
 
 export default function Wordle({ userId }: { userId: string }) {
   const queryClient = useQueryClient();
-
+  const [inputValue, setInputValue] = useState("");
   const {
     isPending,
     isError,
@@ -34,6 +34,24 @@ export default function Wordle({ userId }: { userId: string }) {
     },
   });
 
+  const handleInput = (key: string) => {
+    key = key.toUpperCase();
+    if (!game || game.isGameOver) return;
+    else if (key === "ENTER" && inputValue.length === WORD_LENGTH) {
+      submit(inputValue);
+    }
+    setInputValue((prev) => {
+      if (key === "ENTER" && prev.length === WORD_LENGTH) {
+        return "";
+      } else if (key === "BACKSPACE") {
+        return prev.slice(0, -1);
+      } else if (key.match(/^[A-Z]$/) && prev.length < WORD_LENGTH) {
+        return prev + key;
+      }
+      return prev;
+    });
+  };
+
   const { mutateAsync: reset } = useMutation({
     mutationFn: async () => resetGame(userId),
     onMutate: async () => {
@@ -50,7 +68,6 @@ export default function Wordle({ userId }: { userId: string }) {
     },
   });
 
-  const { inputValue, handleInput, resetInput } = useWordleInput(game, submit);
   useKeydown((e) => {
     handleInput(e.key);
   });
@@ -81,7 +98,7 @@ export default function Wordle({ userId }: { userId: string }) {
           variant="outline"
           size="icon"
           onClick={(e) => {
-            resetInput();
+            setInputValue("");
             reset();
             e.currentTarget.blur();
           }}
