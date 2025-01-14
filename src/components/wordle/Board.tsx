@@ -39,7 +39,7 @@ export function Board({
     );
   }
   return (
-    <div className="mt-3 flex h-[360px] w-80 flex-col">
+    <div className="mt-3 flex min-h-[360px] w-80 flex-col">
       {words.map((word, index) => {
         return (
           <div

@@ -8,7 +8,7 @@ export default async function Page() {
     redirect("/api/auth/signin");
   }
   return (
-    <div>
+    <div className="flex h-full w-full items-center justify-center">
       <MainMenu userId={session.user?.id!} />
     </div>
   );

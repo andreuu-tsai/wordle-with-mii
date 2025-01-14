@@ -2,14 +2,17 @@
 import { db } from "@/db/db";
 import { games } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import generateCongrats, { generateEncouragementOrTaunt } from "./chat";
+import generateCongrats, {
+  generateEncouragementOrTaunt,
+  generateOneMoreChance,
+} from "./chat";
 import { checkWord } from "./checkWord";
 import { authenticate } from "./utils";
 import {
   Correctness,
   DEFAULT_GAME_STATE,
+  EXTRA_LIFE_PROBABILITY,
   Game,
-  MAX_ATTEMPTS,
 } from "./wordleGame";
 
 export async function getGameByUserId(userId: string): Promise<Game> {
@@ -24,6 +27,7 @@ export async function getGameByUserId(userId: string): Promise<Game> {
     words: words.map((word) => checkWord(word, game.solution)),
     isGameOver: game.isGameOver,
     gameResult: game.gameResult,
+    maxAttempts: game.maxAttempts,
   };
 }
 
@@ -59,18 +63,30 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
         userId,
         newGame.words.map((word) => checkWord(word, game.solution)),
       );
-    } else if (prevWords.length + 1 === MAX_ATTEMPTS) {
-      newGame = {
-        ...game,
-        words: [...prevWords, word],
-        gameResult: "lose",
-        isGameOver: true,
-      };
-      generateEncouragementOrTaunt(
-        userId,
-        newGame.words.map((word) => checkWord(word, game.solution)),
-        game.solution,
-      );
+    } else if (prevWords.length + 1 === game.maxAttempts) {
+      if (Math.random() < EXTRA_LIFE_PROBABILITY) {
+        newGame = {
+          ...game,
+          words: [...prevWords, word],
+          maxAttempts: game.maxAttempts + 1,
+        };
+        generateOneMoreChance(
+          userId,
+          newGame.words.map((word) => checkWord(word, game.solution)),
+        );
+      } else {
+        newGame = {
+          ...game,
+          words: [...prevWords, word],
+          gameResult: "lose",
+          isGameOver: true,
+        };
+        generateEncouragementOrTaunt(
+          userId,
+          newGame.words.map((word) => checkWord(word, game.solution)),
+          game.solution,
+        );
+      }
     } else {
       newGame = {
         ...game,
@@ -88,6 +104,7 @@ export async function submitWord(word: string, userId: string): Promise<Game> {
       words: newGame.words.map((word) => checkWord(word, newGame.solution)),
       isGameOver: newGame.isGameOver,
       gameResult: newGame.gameResult,
+      maxAttempts: newGame.maxAttempts,
     };
   } catch (error) {
     console.error(error);

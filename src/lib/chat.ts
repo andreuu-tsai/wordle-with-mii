@@ -81,3 +81,24 @@ export async function getMessagesByUserId(userId: string) {
     .orderBy(asc(messages.createdAt))
     .execute();
 }
+
+export async function generateOneMoreChance(
+  userId: string,
+  words: WordStatus[],
+) {
+  const model = new ChatOpenAI({ model: "gpt-4o-mini" });
+  const guess = words
+    .map((word) => word.map((char) => char.character).join(""))
+    .join(", ");
+  const messages = [
+    new SystemMessage("You are a humor game master of wordle game."),
+    new HumanMessage(
+      `The user lost the game. But you want to give him another chance. 
+      Please generate a sentence tell the user about it. 
+      Here are player's guesses: ${guess}`,
+    ),
+  ];
+
+  const content = (await model.invoke(messages)).content.toString();
+  addMessage(userId, "mii", content);
+}
